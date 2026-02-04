@@ -203,15 +203,124 @@ with transient_live_panel("Custom", config=custom) as panel:
 
 ---
 
+## CLI styling helpers (section rules and key-value panels)
+
+For consistent command headers and summary blocks (e.g. run settings, completion messages), use semantic style constants and helpers so all commands share the same look.
+
+**Semantic style constants** (use with `border_style=` or `style=`):
+
+- `STYLE_SECTION` — `"blue"` (section headers, info panels)
+- `STYLE_SUCCESS` — `"green"` (completion, success panels)
+- `STYLE_WARNING` — `"yellow"` (warnings)
+- `STYLE_DIM` — `"dim"` (separators)
+
+**Section header (Rule):**
+
+```python
+from rich.console import Console
+from rich_transient import section_rule, dim_rule, STYLE_SUCCESS
+
+console = Console()
+
+console.print(section_rule("FETCH (THE FEED)"))
+# ... content ...
+console.print(dim_rule())
+
+console.print(section_rule("Fetch complete", style=STYLE_SUCCESS))
+```
+
+**Key-value panel** (static summary box with consistent padding and border):
+
+```python
+from rich_transient import key_value_panel, STYLE_SECTION, STYLE_SUCCESS
+
+# From (label, value) pairs
+console.print(key_value_panel([
+    ("Backend", "sumologic"),
+    ("Hours Back", "24"),
+    ("Limit", "10000"),
+], title="[bold blue]Run settings[/]", border_style=STYLE_SECTION))
+
+# Preformatted lines (full markup control)
+console.print(key_value_panel([
+    "  [bold]Logs saved to:[/] [cyan]/path/to/logs[/]",
+    "  [bold]Next steps:[/]",
+    "    [dim]# Run analysis:[/]",
+    "    [cyan]ngate analyze /path/to/logs/[/]",
+], border_style=STYLE_SUCCESS))
+```
+
+Use these with `transient_live_panel` so that after the transient panel clears, your final summary uses the same `STYLE_SUCCESS` and `key_value_panel` for a consistent “done” block.
+
+---
+
+## Themes
+
+The module provides **themes** so you can keep the same semantic roles (section, success, warning, dim) but switch palettes. Use a themed console and pass **theme style names** (`"section"`, `"success"`, `"warning"`, `"dim"`) to `section_rule`, `key_value_panel`, and `Panel`/`Rule`; the theme maps those names to colors.
+
+**Built-in themes:**
+
+| Theme name       | Description |
+|------------------|-------------|
+| `default` / `ngate` | Blue sections, green success, yellow warning (current nGate-style). |
+| `muted`          | Softer dim blue/green/yellow; good for low-contrast terminals. |
+| `high_contrast`  | Bold bright blue/green/yellow for accessibility. |
+| `mono`           | No color: bold for section/success, italic for warning, dim for separator. |
+| `nord`           | [Nord](https://www.nordtheme.com/) palette (blue, green, yellow). |
+| `dracula`        | [Dracula](https://draculatheme.com/) palette (purple, green, yellow). |
+
+**Using a theme:**
+
+```python
+from rich_transient import (
+    themed_console,
+    get_theme,
+    section_rule,
+    key_value_panel,
+    THEME_STYLE_SECTION,
+    THEME_STYLE_SUCCESS,
+)
+
+# Option 1: themed_console (one-liner)
+console = themed_console("muted")
+console.print(section_rule("Fetch complete", style=THEME_STYLE_SECTION))
+console.print(key_value_panel([("Output", "/path/to/logs")], border_style=THEME_STYLE_SUCCESS))
+
+# Option 2: get_theme with your own Console
+from rich.console import Console
+console = Console(theme=get_theme("nord"))
+console.print(section_rule("Running", style="section"))
+```
+
+**Theme style name constants:** `THEME_STYLE_SECTION`, `THEME_STYLE_SUCCESS`, `THEME_STYLE_WARNING`, `THEME_STYLE_DIM` — use these (or the strings `"section"`, `"success"`, etc.) when printing with a themed console so the theme supplies the actual color.
+
+**Without a theme:** you can still pass raw colors to the helpers, e.g. `section_rule("Title", style=STYLE_SECTION)` (or `style="blue"`). That works with any Console.
+
+---
+
 ## API summary
 
 | Export | Type | Description |
 |--------|------|-------------|
 | `SPINNER_BRAILLE` | `tuple[str, ...]` | Braille spinner frames. |
 | `LIVE_REFRESH_PER_SECOND` | `float` | Default refresh rate for live displays. |
+| `STYLE_SECTION` | `str` | `"blue"` for section headers and info panels. |
+| `STYLE_SUCCESS` | `str` | `"green"` for completion/success. |
+| `STYLE_WARNING` | `str` | `"yellow"` for warnings. |
+| `STYLE_DIM` | `str` | `"dim"` for separators. |
+| `THEMES` | `dict[str, Theme]` | Built-in themes: default, ngate, muted, high_contrast, mono, nord, dracula. |
+| `THEME_STYLE_SECTION` | `str` | Theme key `"section"` for section headers/panels. |
+| `THEME_STYLE_SUCCESS` | `str` | Theme key `"success"` for completion/success. |
+| `THEME_STYLE_WARNING` | `str` | Theme key `"warning"` for warnings. |
+| `THEME_STYLE_DIM` | `str` | Theme key `"dim"` for separators. |
+| `get_theme(name)` | `(str) -> Theme` | Return a built-in theme by name. |
+| `themed_console(theme_name, **kwargs)` | `() -> Console` | Console using a built-in theme. |
 | `get_braille_frame()` | `() -> int` | Current animation frame index for use with `SPINNER_BRAILLE`. |
 | `braille_spinner_for_status()` | `() -> str` | Registers braille spinner with Rich and returns `"braille"` for `console.status(spinner=...)`. |
 | `register_braille_spinner()` | `() -> None` | Idempotent registration of braille spinner in Rich's SPINNERS. |
+| `section_rule(title, style=...)` | `() -> Rule` | Rule with bold section title. |
+| `dim_rule()` | `() -> Rule` | Dim Rule separator. |
+| `key_value_panel(lines, ...)` | `() -> Panel` | Panel from (label, value) pairs or preformatted lines; optional title, border_style, padding. |
 | `TransientPanelConfig` | dataclass | Panel configuration (max_lines, display_lines, border_style, etc.). |
 | `TRANSIENT_PANEL_PRESETS` | `dict[str, TransientPanelConfig]` | `"default"` and `"streaming"` presets. |
 | `transient_live_panel(...)` | context manager | Yields an object with `append`, `set_status`, `run_task`. |
