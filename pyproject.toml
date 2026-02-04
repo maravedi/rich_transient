@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rich-transient"
+version = "0.1.0"
+description = "Reusable Rich-based braille spinner and transient live panel for CLI output"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["rich>=13.7.1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["rich_transient"]

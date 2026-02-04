@@ -1,0 +1,44 @@
+.venv/
+__pycache__/
+# Build artifacts (Godot + .NET)
+bin/
+obj/
+*/bin/
+*/obj/
+
+# IDE metadata
+.idea/
+.vs/
+*.user
+*.rsuser
+
+# Godot generated data
+.godot/
+export.cfg
+export_presets.cfg
+
+# Speckit / automation scratchpads
+# Tool configs are moved to .ai/ and symlinked
+.ai/cursor/*
+!.ai/cursor/rules/
+!.ai/cursor/rules/**
+!.ai/cursor/hooks.json
+!.ai/cursor/hooks/
+!.ai/cursor/hooks/**
+
+.speckit-cache/
+
+# Cleanup / trash
+.trash/
+
+# Debug files
+debug_*.py
+debug_*.txt
+error.txt
+output.txt
+*-test.yaml
+
+config*.yaml
+config*.yml
+
+Pipfile.lock
