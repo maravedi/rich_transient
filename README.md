@@ -8,15 +8,14 @@ Reusable [Rich](https://github.com/Textualize/rich)-based **braille spinner** an
 
 ## Installation
 
-**Standalone (from this repo):**
+**From PyPI:**
 ```bash
-pip install -e /path/to/AutoIaC/rich_transient
+pip install rich-transient
 ```
 
-**As part of AutoIaC:**
+**Standalone (from this repo):**
 ```bash
-pip install -e /path/to/AutoIaC
-# installs both auto_iac and rich_transient
+pip install -e ./rich_transient
 ```
 
 ---

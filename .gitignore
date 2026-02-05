@@ -1,5 +1,9 @@
 .venv/
 __pycache__/
+dist/
+build/
+*.egg-info/
+*.egg
 # Build artifacts (Godot + .NET)
 bin/
 obj/
