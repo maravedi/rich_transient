@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+rich = ">=13.7.1"
+
+[dev-packages]
+build = "*"
+twine = "*"
+
+[scripts]
+build = "python -m build"
+publish = "twine upload dist/*"
+release = "python scripts/release.py"
+
+[requires]
+python_version = "3.12"
